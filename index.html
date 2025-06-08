@@ -452,7 +452,7 @@ setTimeout(() => {
 
   let currentIndex = 0;
   let slideInterval;
-  const adDuration = 150000; // 150 ثانية (2.5 دقيقة)
+  const adDuration = 150000; // 150 ثانية
   let adFinished = false;
 
   function changeSlide() {
@@ -467,10 +467,8 @@ setTimeout(() => {
   function showNotification(message) {
     notification.textContent = message;
     notification.style.opacity = '1';
-    notification.style.pointerEvents = 'auto';
     setTimeout(() => {
       notification.style.opacity = '0';
-      notification.style.pointerEvents = 'none';
     }, 3000);
   }
 
@@ -480,19 +478,34 @@ setTimeout(() => {
       clearInterval(slideInterval);
       document.body.style.overflow = 'auto';
       window.onbeforeunload = null;
-      window.history.pushState(null, null, window.location.href); // السماح بالرجوع
+      window.history.pushState(null, null, window.location.href);
     } else {
       showNotification("انتظر حتى ينتهي الإعلان");
     }
   }
 
   window.onload = function() {
+    // حماية إضافية للموبايل: منع التكبير والسحب
+    document.addEventListener('touchmove', function(e) {
+      if (!adFinished) e.preventDefault();
+    }, { passive: false });
+
+    document.addEventListener('gesturestart', function(e) {
+      e.preventDefault(); // منع التكبير باللمس
+    });
+
+    // قفل الاتجاه (للأجهزة اللي بتدعمه)
+    if (screen.orientation && screen.orientation.lock) {
+      try {
+        screen.orientation.lock("portrait").catch(() => {});
+      } catch (e) {}
+    }
+
     setTimeout(() => {
       popup.style.display = 'flex';
       document.body.style.overflow = 'hidden';
       slideInterval = setInterval(changeSlide, 3000);
 
-      // منع إعادة التحميل أو الإغلاق
       window.onbeforeunload = function(e) {
         if (!adFinished) {
           e.preventDefault();
@@ -500,7 +513,6 @@ setTimeout(() => {
         }
       };
 
-      // منع الرجوع للخلف
       history.pushState(null, null, window.location.href);
       window.onpopstate = function () {
         if (!adFinished) {
@@ -509,7 +521,6 @@ setTimeout(() => {
         }
       };
 
-      // منع اختصارات مثل F5 و Ctrl+R
       document.addEventListener('keydown', function (e) {
         if (!adFinished && (
           e.key === "F5" || 
@@ -530,6 +541,7 @@ setTimeout(() => {
 
   closeBtn.onclick = closeAd;
 </script>
+
 
 </body>
 </html>
