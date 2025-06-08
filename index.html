@@ -14,6 +14,8 @@
 <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="images/android-chrome-192x192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="images/android-chrome-512x512.png">
+<!-- perload -->
+   <link rel="preload" as="image" href="https://i.postimg.cc/cHBgm2sq/slide1.webp">
 
 <!-- أيقونة خاصة بأجهزة Apple -->
 <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
@@ -46,7 +48,7 @@
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://nightmares-horror.netlify.app/home.html">
-
+   
 </head>
 <body>
   <!-- شريط التنقل -->
@@ -438,11 +440,23 @@ setTimeout(() => {
 </script>
 <script>
   const images = [
-    "https://i.postimg.cc/cHBgm2sq/slide1.webp",
-    "https://i.postimg.cc/XND7b41H/slide2.webp",
-    "https://i.postimg.cc/vB2Mbthg/slide3.webp",
-    "https://i.postimg.cc/FzfvRkCP/slide4.webp"
-  ];
+  "https://i.postimg.cc/cHBgm2sq/slide1.webp",
+  "https://i.postimg.cc/KjcLV9gC/slide2.webp",
+  "https://i.postimg.cc/Y0Xgw160/slide3.webp",
+  "https://i.postimg.cc/XND7b41H/slide2.webp",
+  "https://i.postimg.cc/vB2Mbthg/slide3.webp",
+  "https://i.postimg.cc/FzfvRkCP/slide4.webp"
+];
+
+// عمل preload لكل صورة من الصور
+images.forEach(src => {
+  const link = document.createElement('link');
+  link.rel = 'preload';
+  link.as = 'image';
+  link.href = src;
+  document.head.appendChild(link);
+});
+
 
   const popup = document.getElementById('popup');
   const popupContent = document.getElementById('popup-content');
