@@ -129,22 +129,53 @@ class="absolute right-0 top-0 h-full w-1/3 sm:w-1/4 xs:w-1/5 object-cover opacit
 </section>
 
 
-<div id="popup-content" style="
-  position: relative;
-  background: #fff;
-  border-radius: 15px;
-  max-width: 500px;           /* زيادة العرض */
-  width: 100%;
-  max-height: 90vh;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
-  text-align: center;
-  padding: 20px 30px 50px;    /* زيادة الحشو */
-  font-family: 'Arial Black', Gadget, sans-serif;
-  color: #222;
-  border: 4px solid #e63946;  /* إطار واضح باللون الأحمر */
-  box-sizing: border-box;     /* عشان البعد يشمل البورد */
-">
+<!-- نافذة البوب أب -->
+<div id="popup" aria-modal="true" role="dialog" aria-labelledby="popup-title" aria-describedby="popup-desc" style="display:none; position: fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:9999; padding:20px;">
+
+  <div id="popup-content" style="
+    position: relative;
+    background: #fff;
+    border-radius: 15px;
+    max-width: 500px;           /* حجم أكبر */
+    width: 100%;
+    max-height: 90vh;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    text-align: center;
+    padding: 20px 30px 50px;    /* زيادة الحشو */
+    font-family: 'Arial Black', Gadget, sans-serif;
+    color: #222;
+    border: 4px solid #e63946;  /* إطار واضح */
+    box-sizing: border-box;
+  ">
+    
+    <button id="close-btn" aria-label="إغلاق الإعلان" style="position: absolute; top: 10px; right: 15px; background: #ff3b3b; border: none; color: white; font-weight: bold; font-size: 22px; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; box-shadow: 0 0 10px #ff3b3b; transition: background-color 0.3s ease; z-index: 10001;">&times;</button>
+    
+    <h2 id="popup-title" style="
+      margin: 20px 0 25px;
+      font-size: 36px;
+      color: #e63946;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      font-weight: 900;
+      font-family: 'Arial Black', 'Segoe UI Black', Gadget, sans-serif;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+      text-align: center;
+    ">
+      إعلان
+    </h2>
+
+    <p id="popup-desc" style="font-size: 16px; margin-bottom: 20px; color: #555;">لا تفوت الفرصة! اكتشف عروضنا المميزة الآن.</p>
+    
+    <img src="https://i.postimg.cc/cHBgm2sq/slide1.webp" alt="صورة إعلان 1" style="width: 100%; height: auto; border-radius: 10px; transition: opacity 0.8s ease-in-out; user-select: none; pointer-events: none;" />
+    
+    <a href="#" class="cta-button" style="display: inline-block; background-color: #e63946; color: white; padding: 12px 25px; border-radius: 30px; text-decoration: none; font-weight: bold; font-size: 16px; box-shadow: 0 5px 15px rgba(230, 57, 70, 0.5); transition: background-color 0.3s ease;">اشترِك الآن</a>
+  </div>
+</div>
+
+<!-- إشعار التنبيه -->
+<div id="notification" role="alert" aria-live="assertive" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(230, 57, 70, 0.9); color: white; padding: 12px 25px; border-radius: 30px; font-weight: bold; font-size: 16px; box-shadow: 0 5px 15px rgba(230, 57, 70, 0.5); opacity: 0; pointer-events: none; transition: opacity 0.5s ease; z-index: 10002; max-width: 90vw; text-align: center;"></div>
+
 
 
 
