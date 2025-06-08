@@ -347,13 +347,7 @@ class="absolute right-0 top-0 h-full w-1/3 sm:w-1/4 xs:w-1/5 object-cover opacit
 </section>
 
 <!--وضع عمودي -->
-<div id="rotate-warning" style="display: none;">
-  <div style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); z-index: 99999; display: flex; justify-content: center; align-items: center; text-align: center; padding: 20px;">
-    <div style="color: white; font-size: 24px; font-family: 'Cairo', sans-serif;">
-      من فضلك قم بتدوير الهاتف للوضع العمودي لعرض الصفحة بشكل صحيح 📱🔄
-    </div>
-  </div>
-</div>
+
 
 
 
@@ -505,24 +499,5 @@ setTimeout(() => {
 
   closeBtn.onclick = closeAd;
 </script>
-  <script>
-function checkOrientation() {
-  const warning = document.getElementById("rotate-warning");
-  if (window.innerHeight < window.innerWidth) {
-    // Landscape mode
-    warning.style.display = "block";
-  } else {
-    // Portrait mode
-    warning.style.display = "none";
-  }
-}
-
-// تحقق عند تحميل الصفحة
-checkOrientation();
-
-// تحقق عند تغيير الاتجاه (تدوير الجهاز)
-window.addEventListener("resize", checkOrientation);
-</script>
-
 </body>
 </html>
