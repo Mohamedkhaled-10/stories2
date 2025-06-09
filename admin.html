@@ -3,36 +3,123 @@
 <head>
   <meta charset="UTF-8" />
   <title>صفحة الأدمن</title>
+  <style>
+    /* استايل عام للجسم */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f2f5;
+      color: #333;
+      direction: rtl;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      font-weight: 700;
+      color: #222;
+    }
+
+    button#toggleAdBtn {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 15px 40px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
+      user-select: none;
+    }
+
+    button#toggleAdBtn:hover {
+      background-color: #0056b3;
+      box-shadow: 0 8px 16px rgba(0, 86, 179, 0.4);
+      transform: translateY(-2px);
+    }
+
+    button#toggleAdBtn:active {
+      transform: translateY(1px);
+      box-shadow: 0 4px 8px rgba(0, 86, 179, 0.2);
+    }
+
+    /* لون الزر عند تعطيل الإعلان */
+    button#toggleAdBtn.inactive {
+      background-color: #dc3545; /* أحمر */
+      box-shadow: 0 6px 12px rgba(220, 53, 69, 0.3);
+    }
+
+    button#toggleAdBtn.inactive:hover {
+      background-color: #a71d2a;
+      box-shadow: 0 8px 16px rgba(167, 29, 42, 0.4);
+    }
+  </style>
 </head>
 <body>
   <h1>تحكم في حالة الإعلان</h1>
-<button id="toggleAdBtn">تحميل...</button>
+  <button id="toggleAdBtn">تحميل...</button>
 
-<script>
-  const toggleBtn = document.getElementById('toggleAdBtn');
+  <script>
+    const toggleBtn = document.getElementById('toggleAdBtn');
 
-  // تجيب الحالة من السيرفر وتعرضها في الزر
-  async function loadStatus() {
-    const res = await fetch('/api/ad-status');
-    const data = await res.json();
-    toggleBtn.textContent = data.active ? 'تعطيل الإعلان' : 'تفعيل الإعلان';
-  }
+    // تحديث الزر بناءً على الحالة
+    function updateButton(active) {
+      if (active) {
+        toggleBtn.textContent = 'تعطيل الإعلان';
+        toggleBtn.classList.remove('inactive');
+      } else {
+        toggleBtn.textContent = 'تفعيل الإعلان';
+        toggleBtn.classList.add('inactive');
+      }
+    }
 
-  toggleBtn.addEventListener('click', async () => {
-    const res = await fetch('/api/ad-status');
-    const data = await res.json();
-    const newStatus = !data.active;
+    // تجيب الحالة من السيرفر وتعرضها في الزر
+    async function loadStatus() {
+      try {
+        const res = await fetch('/api/ad-status');
+        if (!res.ok) throw new Error('فشل تحميل الحالة');
+        const data = await res.json();
+        updateButton(data.active);
+      } catch (err) {
+        toggleBtn.textContent = 'حدث خطأ، أعد المحاولة';
+        toggleBtn.disabled = true;
+        console.error(err);
+      }
+    }
 
-    await fetch('/api/ad-status', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ active: newStatus })
+    toggleBtn.addEventListener('click', async () => {
+      toggleBtn.disabled = true;
+      toggleBtn.textContent = '...جاري التحديث';
+
+      try {
+        const res = await fetch('/api/ad-status');
+        if (!res.ok) throw new Error('فشل تحميل الحالة');
+        const data = await res.json();
+        const newStatus = !data.active;
+
+        const postRes = await fetch('/api/ad-status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ active: newStatus })
+        });
+
+        if (!postRes.ok) throw new Error('فشل تحديث الحالة');
+
+        updateButton(newStatus);
+      } catch (err) {
+        toggleBtn.textContent = 'حدث خطأ، أعد المحاولة';
+        console.error(err);
+      } finally {
+        toggleBtn.disabled = false;
+      }
     });
 
-    toggleBtn.textContent = newStatus ? 'تعطيل الإعلان' : 'تفعيل الإعلان';
-  });
-
-  loadStatus();
-</script>
+    loadStatus();
+  </script>
 </body>
 </html>
