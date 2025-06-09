@@ -404,22 +404,28 @@ setTimeout(() => {
 </script>
 
 <script>
+  const adLayer = document.getElementById('ad-layer');
 
-    const adLayer = document.getElementById('ad-layer');
+  let hasScrolled = false;
 
-    adLayer.addEventListener('click', () => {
+  function handleScroll() {
+    if (!hasScrolled) {
+      hasScrolled = true;
 
-      // فتح الإعلان في تاب جديد
-
+      // فتح الإعلان في تبويب جديد
       window.open('https://stories-1.netlify.app/', '_blank');
 
       // إزالة الطبقة عشان ميتفتحش الإعلان تاني
+      adLayer?.remove();
 
-      adLayer.remove();
+      // إلغاء الاستماع للسكرول بعد أول مرة
+      window.removeEventListener('scroll', handleScroll);
+    }
+  }
 
-    });
+  window.addEventListener('scroll', handleScroll);
+</script>
 
-  </script>
 
 </body>
 </html>
