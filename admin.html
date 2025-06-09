@@ -12,6 +12,7 @@
       direction: rtl;
       padding: 0;
       margin: 0;
+      transition: background 0.3s, color 0.3s;
     }
 
     h1 {
@@ -19,7 +20,6 @@
       margin: 0;
     }
 
-    /* مركز الصفحة */
     .centered {
       display: flex;
       flex-direction: column;
@@ -29,7 +29,6 @@
       padding: 20px;
     }
 
-    /* نموذج تسجيل الدخول */
     #loginForm {
       background: white;
       padding: 30px 40px;
@@ -70,7 +69,6 @@
       text-align: center;
     }
 
-    /* لوحة التحكم */
     #adminPanel {
       display: none;
       padding: 20px;
@@ -167,6 +165,47 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+
+    /* الوضع الليلي */
+    body.dark-mode {
+      background: #1e1e2f;
+      color: #ddd;
+    }
+
+    body.dark-mode .dashboard-header,
+    body.dark-mode .card,
+    body.dark-mode table {
+      background-color: #2c2c3e;
+      color: #ddd;
+    }
+
+    body.dark-mode table th {
+      background-color: #444;
+    }
+
+    body.dark-mode .logout-btn {
+      background-color: #e74c3c;
+    }
+
+    body.dark-mode #loginForm {
+      background-color: #2c2c3e;
+      color: #ddd;
+    }
+
+    #darkModeToggle {
+      background: #333;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+
+    body.dark-mode #darkModeToggle {
+      background: #ddd;
+      color: #222;
+    }
   </style>
 </head>
 <body>
@@ -184,7 +223,10 @@
 <div id="adminPanel">
   <div class="dashboard-header">
     <h1><i class="fas fa-tools"></i> لوحة تحكم الأدمن</h1>
-    <button class="logout-btn" onclick="location.reload()">تسجيل الخروج</button>
+    <div>
+      <button id="darkModeToggle"><i class="fas fa-moon"></i> الوضع الليلي</button>
+      <button class="logout-btn" onclick="location.reload()">تسجيل الخروج</button>
+    </div>
   </div>
 
   <div class="cards">
@@ -324,6 +366,14 @@
       clock.textContent = now.toLocaleTimeString();
     }, 1000);
   }
+
+  const darkModeToggle = document.getElementById('darkModeToggle');
+  darkModeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    darkModeToggle.innerHTML = document.body.classList.contains('dark-mode')
+      ? '<i class="fas fa-sun"></i> الوضع النهاري'
+      : '<i class="fas fa-moon"></i> الوضع الليلي';
+  });
 </script>
 </body>
 </html>
