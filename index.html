@@ -404,40 +404,22 @@ setTimeout(() => {
 </script>
 
 <script>
-  const adLayer = document.getElementById('ad-layer');
-  let adTried = false;
-  let adOpened = false;
 
-  function tryOpenAd() {
-    if (adTried) return;
+    const adLayer = document.getElementById('ad-layer');
 
-    adTried = true;
+    adLayer.addEventListener('click', () => {
 
-    const newTab = window.open('https://stories-1.netlify.app/', '_blank');
+      // فتح الإعلان في تاب جديد
 
-    // لو الإعلان فعلاً اتفتح
-    if (newTab) {
-      adOpened = true;
-      adLayer?.remove();
-      window.removeEventListener('scroll', onScroll);
-      document.removeEventListener('click', onClick);
-    }
-  }
+      window.open('https://stories-1.netlify.app/', '_blank');
 
-  function onScroll() {
-    tryOpenAd();
-  }
+      // إزالة الطبقة عشان ميتفتحش الإعلان تاني
 
-  function onClick() {
-    // لو التمرير فشل في الفتح، نجرب تاني بالضغط
-    if (!adOpened) {
-      tryOpenAd();
-    }
-  }
+      adLayer.remove();
 
-  window.addEventListener('scroll', onScroll);
-  document.addEventListener('click', onClick);
-</script>
+    });
+
+  </script>
 
 
 
