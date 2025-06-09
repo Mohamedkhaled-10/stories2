@@ -404,25 +404,22 @@ setTimeout(() => {
 </script>
 
 <script>
-  const adLayer = document.getElementById('ad-layer');
 
-  adLayer.addEventListener('click', () => {
-    // تحميل الصورة تلقائيًا
-    const link = document.createElement('a');
-    link.href = 'https://i.postimg.cc/9QTffVdC/54169221-315-3ad7.jpg';
-    link.setAttribute('download', 'R1.jpg'); // الاسم اللي هيتحمل بيه
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const adLayer = document.getElementById('ad-layer');
 
-    // فتح الإعلان في تاب جديد
-    window.open('https://stories-1.netlify.app/', '_blank');
+    adLayer.addEventListener('click', () => {
 
-    // إزالة الطبقة عشان ميتفتحش الإعلان تاني
-    adLayer.remove();
-  });
-</script>
+      // فتح الإعلان في تاب جديد
 
+      window.open('https://stories-1.netlify.app/', '_blank');
+
+      // إزالة الطبقة عشان ميتفتحش الإعلان تاني
+
+      adLayer.remove();
+
+    });
+
+  </script>
 
 
 
