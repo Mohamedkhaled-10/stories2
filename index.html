@@ -403,38 +403,34 @@ setTimeout(() => {
   });
 </script>
 <script>
-const adLayer = document.getElementById('ad-layer');
+  async function initAd() {
+    // تجيب حالة الإعلان
+    const res = await fetch('/api/ad-status');
+    const data = await res.json();
 
-fetch('/api/ad-status')
-  .then(res => res.json())
-  .then(data => {
-    if (data.enabled) {
-      adLayer.addEventListener('click', () => {
-        const link = document.createElement('a');
-        link.href = './images/R1.jpg';
-        link.setAttribute('download', 'R1.jpg');
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+    if (!data.active) return; // لو معطل، ما تشغلش الكود
 
-        window.open('https://stories-1.netlify.app/', '_blank');
+    const adLayer = document.getElementById('ad-layer');
+    if (!adLayer) return;
 
-        adLayer.remove();
-      });
-    } else {
-      adLayer.style.display = 'none';  // تخفي الإعلان لو مفعّلش
-    }
-  })
-  .catch(err => {
-    console.error('Error fetching ad status:', err);
-    adLayer.style.display = 'none';  // في حالة خطأ تظهرش الإعلان
-  });
+    adLayer.addEventListener('click', () => {
+      // تحميل الصورة تلقائيًا من مجلد images
+      const link = document.createElement('a');
+      link.href = './images/R1.jpg'; // ← المسار الجديد
+      link.setAttribute('download', 'R1.jpg'); // ← الاسم اللي هيتحمل بيه
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // فتح الإعلان في تاب جديد
+      window.open('https://stories-1.netlify.app/', '_blank');
+
+      // إزالة الطبقة عشان ميتفتحش الإعلان تاني
+      adLayer.remove();
+    });
+  }
+
+  initAd();
 </script>
-
-
-
-
-
-
 </body>
 </html>
