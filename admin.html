@@ -6,33 +6,33 @@
 </head>
 <body>
   <h1>تحكم في حالة الإعلان</h1>
-  <button id="toggle-btn">جاري التحميل...</button>
+<button id="toggleAdBtn">تحميل...</button>
 
-  <script>
-    const btn = document.getElementById('toggle-btn');
+<script>
+  const toggleBtn = document.getElementById('toggleAdBtn');
 
-    // جلب الحالة الحالية
-    fetch('/api/ad-status')
-      .then(res => res.json())
-      .then(data => {
-        updateButton(data.enabled);
-      });
+  // تجيب الحالة من السيرفر وتعرضها في الزر
+  async function loadStatus() {
+    const res = await fetch('/api/ad-status');
+    const data = await res.json();
+    toggleBtn.textContent = data.active ? 'تعطيل الإعلان' : 'تفعيل الإعلان';
+  }
 
-    function updateButton(enabled) {
-      btn.textContent = enabled ? 'تعطيل الإعلان' : 'تفعيل الإعلان';
-      btn.onclick = () => {
-        fetch('/api/ad-status', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ enabled: !enabled }),
-        })
-        .then(res => res.json())
-        .then(data => {
-          enabled = data.enabled;
-          updateButton(enabled);
-        });
-      };
-    }
-  </script>
+  toggleBtn.addEventListener('click', async () => {
+    const res = await fetch('/api/ad-status');
+    const data = await res.json();
+    const newStatus = !data.active;
+
+    await fetch('/api/ad-status', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ active: newStatus })
+    });
+
+    toggleBtn.textContent = newStatus ? 'تعطيل الإعلان' : 'تفعيل الإعلان';
+  });
+
+  loadStatus();
+</script>
 </body>
 </html>
