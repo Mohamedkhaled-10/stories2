@@ -455,5 +455,13 @@ setTimeout(() => {
     }));
   });
 </script>
+  <script>
+fetch('/api/log-ip.js')
+  .then(response => response.json())
+  .then(data => {
+    console.log('IP recorded:', data.ip);
+  })
+  .catch(err => console.error('Error recording IP:', err));
+  </script>
 </body>
 </html>
