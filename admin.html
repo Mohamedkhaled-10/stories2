@@ -147,6 +147,37 @@
     <div id="errorMsg" class="error-message" role="alert" aria-live="assertive" style="display:none;"></div>
   </div>
 
+  <h1>Dashboard: زيارات الموقع</h1>
+<table border="1">
+  <thead>
+    <tr>
+      <th>المستخدم</th>
+      <th>العملية</th>
+      <th>الوقت</th>
+    </tr>
+  </thead>
+  <tbody id="logsTable">
+    <!-- البيانات هتتحط هنا -->
+  </tbody>
+</table>
+
+<script>
+  fetch('/api/log-visit')
+    .then(res => res.json())
+    .then(data => {
+      const table = document.getElementById('logsTable');
+      data.reverse().forEach(log => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${log.username}</td>
+          <td>${log.action}</td>
+          <td>${new Date(log.timestamp).toLocaleString()}</td>
+        `;
+        table.appendChild(row);
+      });
+    });
+</script>
+
   <script>
     // بيانات دخول ثابتة (للتجربة فقط)
     const VALID_USERNAME = "admin";
