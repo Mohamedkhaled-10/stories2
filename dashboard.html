@@ -2,61 +2,105 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8" />
-  <title>لوحة عرض IPs</title>
+  <title>لوحة عرض الزوار</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      max-width: 600px;
-      margin: 20px auto;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 800px;
+      margin: 30px auto;
       direction: rtl;
-      background-color: #f9f9f9;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      background-color: #f4f7f8;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      color: #333;
     }
     h1 {
       text-align: center;
-      color: #333;
+      margin-bottom: 30px;
+      color: #005f73;
+      letter-spacing: 1px;
     }
-    ul {
-      list-style-type: none;
-      padding: 0;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.05);
     }
-    li {
-      background: #e3e3e3;
-      margin: 8px 0;
-      padding: 10px 15px;
-      border-radius: 5px;
-      font-size: 18px;
-      color: #444;
+    thead {
+      background-color: #0a9396;
+      color: white;
+    }
+    th, td {
+      padding: 12px 15px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+      font-size: 16px;
+    }
+    tbody tr:hover {
+      background-color: #e0fbfc;
+    }
+    caption {
+      caption-side: bottom;
+      padding: 10px;
+      font-style: italic;
+      color: #666;
+    }
+    .user-agent {
+      font-size: 13px;
+      color: #555;
+      max-width: 300px;
+      word-wrap: break-word;
     }
   </style>
 </head>
 <body>
-  <h1>الـ IPs الزائرين</h1>
-  <ul id="ip-list">
-    <li>جاري تحميل البيانات...</li>
-  </ul>
+  <h1>لوحة عرض زوار الموقع</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>رقم</th>
+        <th>IP</th>
+        <th>التاريخ والوقت</th>
+        <th>نوع الجهاز (User-Agent)</th>
+      </tr>
+    </thead>
+    <tbody id="visits-table-body">
+      <tr><td colspan="4">جاري تحميل البيانات...</td></tr>
+    </tbody>
+  </table>
 
   <script>
-    async function loadIPs() {
+    async function loadVisits() {
       try {
         const res = await fetch('/api/get-ips');
         if (!res.ok) throw new Error('فشل تحميل البيانات');
-        const data = await res.json();
 
-        const ipList = document.getElementById('ip-list');
-        if (data.ips.length === 0) {
-          ipList.innerHTML = '<li>لا توجد بيانات</li>';
-        } else {
-          ipList.innerHTML = data.ips.map(ip => `<li>${ip}</li>`).join('');
+        const data = await res.json();
+        const tbody = document.getElementById('visits-table-body');
+
+        if (data.visits.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="4">لا توجد بيانات حتى الآن</td></tr>`;
+          return;
         }
+
+        tbody.innerHTML = data.visits.map((visit, index) => `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${visit.ip}</td>
+            <td>${visit.time}</td>
+            <td class="user-agent" title="${visit.userAgent}">${visit.userAgent}</td>
+          </tr>
+        `).join('');
       } catch (error) {
         console.error(error);
-        document.getElementById('ip-list').innerHTML = '<li>حدث خطأ في تحميل البيانات</li>';
+        document.getElementById('visits-table-body').innerHTML = `<tr><td colspan="4">حدث خطأ في تحميل البيانات</td></tr>`;
       }
     }
-    loadIPs();
+
+    loadVisits();
   </script>
 </body>
 </html>
