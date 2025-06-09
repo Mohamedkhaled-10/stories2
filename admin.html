@@ -166,7 +166,6 @@
       100% { transform: rotate(360deg); }
     }
 
-    /* الوضع الليلي */
     body.dark-mode {
       background: #1e1e2f;
       color: #ddd;
@@ -303,7 +302,7 @@
 
   async function loadStatus() {
     toggleBtn.disabled = true;
-    toggleBtn.textContent = 'جارٍ التحميل';
+    toggleBtn.innerHTML = 'جارٍ التحميل';
     toggleBtn.appendChild(createSpinner());
 
     try {
@@ -355,25 +354,24 @@
         table.appendChild(row);
       });
     } catch {
-      showError('فشل تحميل سجل الزوار');
+      showError('فشل تحميل سجل الزيارات.');
     }
   }
 
   function startClock() {
-    const clock = document.getElementById('currentTime');
+    const currentTime = document.getElementById('currentTime');
     setInterval(() => {
       const now = new Date();
-      clock.textContent = now.toLocaleTimeString();
+      currentTime.textContent = now.toLocaleTimeString();
     }, 1000);
   }
 
+  // الوضع الليلي
   const darkModeToggle = document.getElementById('darkModeToggle');
   darkModeToggle.addEventListener('click', () => {
     document.body.classList.toggle('dark-mode');
-    darkModeToggle.innerHTML = document.body.classList.contains('dark-mode')
-      ? '<i class="fas fa-sun"></i> الوضع النهاري'
-      : '<i class="fas fa-moon"></i> الوضع الليلي';
   });
 </script>
+
 </body>
 </html>
