@@ -2,7 +2,7 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8" />
-  <title>صفحة الأدمن</title>
+  <title>صفحة تسجيل الدخول - صفحة الأدمن</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -12,6 +12,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       padding: 40px 20px;
       min-height: 100vh;
       margin: 0;
@@ -20,6 +21,62 @@
       margin-bottom: 30px;
       font-weight: 700;
       color: #222;
+    }
+    /* صفحة تسجيل الدخول */
+    #loginForm {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 320px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    #loginForm input {
+      padding: 12px 15px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      outline-offset: 2px;
+      transition: border-color 0.3s ease;
+    }
+    #loginForm input:focus {
+      border-color: #007bff;
+    }
+    #loginForm button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 15px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
+      user-select: none;
+    }
+    #loginForm button:hover {
+      background-color: #0056b3;
+      box-shadow: 0 8px 16px rgba(0, 86, 179, 0.4);
+      transform: translateY(-2px);
+    }
+    #loginForm button:active {
+      transform: translateY(1px);
+      box-shadow: 0 4px 8px rgba(0, 86, 179, 0.2);
+    }
+    .error-message {
+      color: #dc3545;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    /* صفحة التحكم - مخفية في البداية */
+    #adminPanel {
+      display: none;
+      flex-direction: column;
+      align-items: center;
     }
     button#toggleAdBtn {
       position: relative;
@@ -54,7 +111,6 @@
       background-color: #a71d2a;
       box-shadow: 0 8px 16px rgba(167, 29, 42, 0.4);
     }
-
     /* سبينر تحميل صغير */
     .spinner {
       border: 3px solid #f3f3f3; /* لون الخلفية */
@@ -65,28 +121,59 @@
       animation: spin 1s linear infinite;
       margin-left: 10px; /* عشان يبقى جنب النص */
     }
-
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-
-    /* حالة الخطأ */
-    .error-message {
-      margin-top: 15px;
-      color: #dc3545;
-      font-weight: 600;
-    }
   </style>
 </head>
 <body>
-  <h1>تحكم في حالة الإعلان</h1>
-  <button id="toggleAdBtn" aria-live="polite" aria-busy="false">
-    تحميل...
-  </button>
-  <div id="errorMsg" class="error-message" role="alert" aria-live="assertive" style="display:none;"></div>
+  
+  <!-- نموذج تسجيل الدخول -->
+  <form id="loginForm" aria-label="نموذج تسجيل الدخول">
+    <h1>تسجيل الدخول</h1>
+    <input type="text" id="username" placeholder="اسم المستخدم" required autocomplete="username" />
+    <input type="password" id="password" placeholder="كلمة المرور" required autocomplete="current-password" />
+    <button type="submit">دخول</button>
+    <div id="loginError" class="error-message" role="alert" aria-live="assertive" style="display:none;"></div>
+  </form>
+
+  <!-- لوحة التحكم مخفية -->
+  <div id="adminPanel">
+    <h1>تحكم في حالة الإعلان</h1>
+    <button id="toggleAdBtn" aria-live="polite" aria-busy="false">
+      تحميل...
+    </button>
+    <div id="errorMsg" class="error-message" role="alert" aria-live="assertive" style="display:none;"></div>
+  </div>
 
   <script>
+    // بيانات دخول ثابتة (للتجربة فقط)
+    const VALID_USERNAME = "admin";
+    const VALID_PASSWORD = "123456";
+
+    const loginForm = document.getElementById('loginForm');
+    const loginError = document.getElementById('loginError');
+    const adminPanel = document.getElementById('adminPanel');
+
+    loginForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const username = loginForm.username.value.trim();
+      const password = loginForm.password.value.trim();
+
+      if(username === VALID_USERNAME && password === VALID_PASSWORD){
+        loginError.style.display = 'none';
+        loginForm.style.display = 'none';
+        adminPanel.style.display = 'flex';
+        loadStatus();
+      } else {
+        loginError.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة.';
+        loginError.style.display = 'block';
+      }
+    });
+
+
+    // كود صفحة الأدمن (نفس الموجود عندك بالضبط)
     const toggleBtn = document.getElementById('toggleAdBtn');
     const errorMsg = document.getElementById('errorMsg');
 
@@ -96,7 +183,6 @@
       return spinner;
     }
 
-    // تحديث الزر بناءً على الحالة
     function updateButton(active) {
       errorMsg.style.display = 'none';
       toggleBtn.disabled = false;
@@ -110,7 +196,6 @@
       }
     }
 
-    // عرض رسالة الخطأ بدون تعطيل الزر
     function showError(message) {
       errorMsg.textContent = message;
       errorMsg.style.display = 'block';
@@ -140,11 +225,8 @@
     toggleBtn.addEventListener('click', async () => {
       toggleBtn.disabled = true;
       toggleBtn.setAttribute('aria-busy', 'true');
-
-      // إزالة أي رسالة خطأ
       errorMsg.style.display = 'none';
 
-      // عرض سبينر جنب النص
       const spinner = createSpinner();
       const baseText = toggleBtn.classList.contains('inactive') ? 'تفعيل الإعلان' : 'تعطيل الإعلان';
       toggleBtn.textContent = baseText;
@@ -170,8 +252,6 @@
         console.error(err);
       }
     });
-
-    loadStatus();
   </script>
 </body>
 </html>
