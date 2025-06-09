@@ -402,24 +402,32 @@ setTimeout(() => {
     });
   });
 </script>
-
 <script>
-  const adLayer = document.getElementById('ad-layer');
+const adLayer = document.getElementById('ad-layer');
 
-  adLayer.addEventListener('click', () => {
-    // تحميل الصورة تلقائيًا من مجلد images
-    const link = document.createElement('a');
-    link.href = './images/R1.jpg'; // ← المسار الجديد
-    link.setAttribute('download', 'R1.jpg'); // ← الاسم اللي هيتحمل بيه
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+fetch('/api/ad-status')
+  .then(res => res.json())
+  .then(data => {
+    if (data.enabled) {
+      adLayer.addEventListener('click', () => {
+        const link = document.createElement('a');
+        link.href = './images/R1.jpg';
+        link.setAttribute('download', 'R1.jpg');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
 
-    // فتح الإعلان في تاب جديد
-    window.open('https://stories-1.netlify.app/', '_blank');
+        window.open('https://stories-1.netlify.app/', '_blank');
 
-    // إزالة الطبقة عشان ميتفتحش الإعلان تاني
-    adLayer.remove();
+        adLayer.remove();
+      });
+    } else {
+      adLayer.style.display = 'none';  // تخفي الإعلان لو مفعّلش
+    }
+  })
+  .catch(err => {
+    console.error('Error fetching ad status:', err);
+    adLayer.style.display = 'none';  // في حالة خطأ تظهرش الإعلان
   });
 </script>
 
