@@ -55,177 +55,48 @@
       box-shadow: 0 8px 16px rgba(167, 29, 42, 0.4);
     }
 
+    /* سبينر تحميل صغير */
     .spinner {
-      border: 3px solid #f3f3f3;
-      border-top: 3px solid white;
+      border: 3px solid #f3f3f3; /* لون الخلفية */
+      border-top: 3px solid white; /* لون القطعة الدوارة */
       border-radius: 50%;
       width: 18px;
       height: 18px;
       animation: spin 1s linear infinite;
-      margin-left: 10px;
+      margin-left: 10px; /* عشان يبقى جنب النص */
     }
+
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
 
+    /* حالة الخطأ */
     .error-message {
       margin-top: 15px;
       color: #dc3545;
       font-weight: 600;
     }
-
-    /* سجل التغييرات */
-    #logContainer {
-      margin-top: 30px;
-      width: 100%;
-      max-width: 400px;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      padding: 15px;
-      font-size: 14px;
-      color: #555;
-      max-height: 200px;
-      overflow-y: auto;
-    }
-
-    /* صفحة تسجيل الدخول */
-    #loginPage {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      width: 100%;
-    }
-    #loginForm {
-      background: white;
-      padding: 30px 40px;
-      border-radius: 10px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-      width: 320px;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-    #loginForm input {
-      padding: 12px;
-      font-size: 16px;
-      border: 1.5px solid #ddd;
-      border-radius: 6px;
-      outline-color: #007bff;
-    }
-    #loginForm button {
-      background-color: #007bff;
-      color: white;
-      border: none;
-      padding: 15px;
-      font-size: 18px;
-      border-radius: 8px;
-      cursor: pointer;
-      box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
-      transition: background-color 0.3s ease;
-    }
-    #loginForm button:hover {
-      background-color: #0056b3;
-    }
-    #loginError {
-      color: #dc3545;
-      font-weight: 600;
-      display: none;
-    }
-
-    /* صفحة الأدمن مخفية افتراضياً */
-    #adminPage {
-      display: none;
-      width: 100%;
-      max-width: 500px;
-      align-items: center;
-      flex-direction: column;
-    }
-
   </style>
 </head>
 <body>
-
-  <!-- صفحة تسجيل الدخول -->
-  <div id="loginPage">
-    <h1>تسجيل الدخول للأدمن</h1>
-    <form id="loginForm">
-      <input type="text" id="username" placeholder="اسم المستخدم" autocomplete="username" required />
-      <input type="password" id="password" placeholder="كلمة المرور" autocomplete="current-password" required />
-      <button type="submit">دخول</button>
-      <div id="loginError" role="alert" aria-live="assertive"></div>
-    </form>
-  </div>
-
-  <!-- صفحة الأدمن -->
-  <div id="adminPage" role="main" aria-live="polite">
-    <h1>تحكم في حالة الإعلان</h1>
-    <button id="toggleAdBtn" aria-live="polite" aria-busy="false">
-      تحميل...
-    </button>
-    <div id="errorMsg" class="error-message" role="alert" aria-live="assertive" style="display:none;"></div>
-
-    <div id="logContainer" aria-label="سجل التغييرات"></div>
-  </div>
+  <h1>تحكم في حالة الإعلان</h1>
+  <button id="toggleAdBtn" aria-live="polite" aria-busy="false">
+    تحميل...
+  </button>
+  <div id="errorMsg" class="error-message" role="alert" aria-live="assertive" style="display:none;"></div>
 
   <script>
-    // بيانات تسجيل دخول ثابتة - ممكن تغيرهم هنا
-    const ADMIN_USERNAME = 'admin';
-    const ADMIN_PASSWORD = '123456';
-
-    // الصفحة وعناصرها
-    const loginPage = document.getElementById('loginPage');
-    const adminPage = document.getElementById('adminPage');
-    const loginForm = document.getElementById('loginForm');
-    const loginError = document.getElementById('loginError');
-
-    // عناصر الأدمن
     const toggleBtn = document.getElementById('toggleAdBtn');
     const errorMsg = document.getElementById('errorMsg');
-    const logContainer = document.getElementById('logContainer');
 
-    // تسجيل الدخول
-    loginForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      loginError.style.display = 'none';
-
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value.trim();
-
-      if(username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-        // تخزين حالة تسجيل الدخول في الجلسة
-        sessionStorage.setItem('loggedIn', 'true');
-        showAdminPage();
-      } else {
-        loginError.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة.';
-        loginError.style.display = 'block';
-      }
-    });
-
-    // عرض صفحة الأدمن بعد تسجيل الدخول
-    function showAdminPage() {
-      loginPage.style.display = 'none';
-      adminPage.style.display = 'flex';
-      loadStatus();
-      loadLog();
-    }
-
-    // تحقق من حالة تسجيل الدخول عند تحميل الصفحة
-    if(sessionStorage.getItem('loggedIn') === 'true') {
-      showAdminPage();
-    }
-
-    // --- وظيفة السبينر ---
     function createSpinner() {
       const spinner = document.createElement('span');
       spinner.classList.add('spinner');
       return spinner;
     }
 
-    // --- تحديث الزر ---
+    // تحديث الزر بناءً على الحالة
     function updateButton(active) {
       errorMsg.style.display = 'none';
       toggleBtn.disabled = false;
@@ -239,7 +110,7 @@
       }
     }
 
-    // --- إظهار رسالة خطأ ---
+    // عرض رسالة الخطأ بدون تعطيل الزر
     function showError(message) {
       errorMsg.textContent = message;
       errorMsg.style.display = 'block';
@@ -247,90 +118,60 @@
       toggleBtn.setAttribute('aria-busy', 'false');
     }
 
-    // --- تحميل الحالة من السيرفر ---
     async function loadStatus() {
       toggleBtn.disabled = true;
       toggleBtn.setAttribute('aria-busy', 'true');
-      toggleBtn.textContent = 'تحميل...';
+      toggleBtn.textContent = 'جارٍ التحميل';
+      toggleBtn.appendChild(createSpinner());
+      errorMsg.style.display = 'none';
+
       try {
-        const response = await fetch('https://api.example.com/ad-status');
-        if(!response.ok) throw new Error(`خطأ في الاتصال: ${response.status}`);
-        const data = await response.json();
-
-        if(typeof data.active !== 'boolean') throw new Error('استجابة غير صحيحة');
-
+        const res = await fetch('/api/ad-status');
+        if (!res.ok) throw new Error('فشل تحميل الحالة');
+        const data = await res.json();
         updateButton(data.active);
       } catch (err) {
-        showError('فشل تحميل حالة الإعلان. الرجاء المحاولة لاحقًا.');
+        showError('حدث خطأ أثناء تحميل الحالة. حاول مرة أخرى.');
         console.error(err);
-        toggleBtn.textContent = 'تعذر التحميل';
+        toggleBtn.textContent = 'إعادة تحميل الحالة';
       }
     }
 
-    // --- حفظ حالة الإعلان وتحديثها في السيرفر ---
-    async function saveStatus(active) {
+    toggleBtn.addEventListener('click', async () => {
       toggleBtn.disabled = true;
       toggleBtn.setAttribute('aria-busy', 'true');
-      toggleBtn.textContent = 'جارٍ التحديث...';
+
+      // إزالة أي رسالة خطأ
+      errorMsg.style.display = 'none';
+
+      // عرض سبينر جنب النص
+      const spinner = createSpinner();
+      const baseText = toggleBtn.classList.contains('inactive') ? 'تفعيل الإعلان' : 'تعطيل الإعلان';
+      toggleBtn.textContent = baseText;
+      toggleBtn.appendChild(spinner);
 
       try {
-        const response = await fetch('https://api.example.com/ad-status', {
+        const res = await fetch('/api/ad-status');
+        if (!res.ok) throw new Error('فشل تحميل الحالة');
+        const data = await res.json();
+        const newStatus = !data.active;
+
+        const postRes = await fetch('/api/ad-status', {
           method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({active}),
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ active: newStatus })
         });
-        if(!response.ok) throw new Error(`خطأ في الاتصال: ${response.status}`);
 
-        // التحديث ناجح
-        updateButton(active);
+        if (!postRes.ok) throw new Error('فشل تحديث الحالة');
 
-        // تسجيل التغيير في السجل
-        addLogEntry(active);
-
+        updateButton(newStatus);
       } catch (err) {
-        showError('فشل تحديث حالة الإعلان. الرجاء المحاولة لاحقًا.');
+        showError('حدث خطأ أثناء تحديث الحالة. حاول مرة أخرى.');
         console.error(err);
       }
-    }
-
-    // --- حدث الضغط على الزر ---
-    toggleBtn.addEventListener('click', () => {
-      // الحصول على الحالة الحالية عشان نعكسها
-      const isActive = !toggleBtn.classList.contains('inactive');
-      saveStatus(!isActive);
     });
 
-    // --- سجل التغييرات في localStorage ---
-    const LOG_KEY = 'adStatusLog';
-
-    function addLogEntry(active) {
-      const log = JSON.parse(localStorage.getItem(LOG_KEY)) || [];
-      const now = new Date();
-      const timeStr = now.toLocaleString('ar-EG', {hour12:false});
-      log.unshift(`${timeStr} — تم ${active ? 'تفعيل' : 'تعطيل'} الإعلان`);
-      if(log.length > 20) log.pop(); // حافظ على 20 سجل فقط
-      localStorage.setItem(LOG_KEY, JSON.stringify(log));
-      renderLog(log);
-    }
-
-    function loadLog() {
-      const log = JSON.parse(localStorage.getItem(LOG_KEY)) || [];
-      renderLog(log);
-    }
-
-    function renderLog(log) {
-      if(log.length === 0) {
-        logContainer.textContent = 'لا يوجد سجلات حتى الآن.';
-        return;
-      }
-      logContainer.innerHTML = '';
-      log.forEach(entry => {
-        const p = document.createElement('p');
-        p.textContent = entry;
-        logContainer.appendChild(p);
-      });
-    }
+    loadStatus();
   </script>
-
 </body>
 </html>
