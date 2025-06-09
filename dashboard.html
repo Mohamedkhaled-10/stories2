@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <title>لوحة عرض IPs</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 20px auto;
+      direction: rtl;
+      background-color: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      background: #e3e3e3;
+      margin: 8px 0;
+      padding: 10px 15px;
+      border-radius: 5px;
+      font-size: 18px;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+  <h1>الـ IPs الزائرين</h1>
+  <ul id="ip-list">
+    <li>جاري تحميل البيانات...</li>
+  </ul>
+
+  <script>
+    async function loadIPs() {
+      try {
+        const res = await fetch('/api/get-ips');
+        if (!res.ok) throw new Error('فشل تحميل البيانات');
+        const data = await res.json();
+
+        const ipList = document.getElementById('ip-list');
+        if (data.ips.length === 0) {
+          ipList.innerHTML = '<li>لا توجد بيانات</li>';
+        } else {
+          ipList.innerHTML = data.ips.map(ip => `<li>${ip}</li>`).join('');
+        }
+      } catch (error) {
+        console.error(error);
+        document.getElementById('ip-list').innerHTML = '<li>حدث خطأ في تحميل البيانات</li>';
+      }
+    }
+    loadIPs();
+  </script>
+</body>
+</html>
