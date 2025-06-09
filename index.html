@@ -405,26 +405,32 @@ setTimeout(() => {
 
 <script>
   const adLayer = document.getElementById('ad-layer');
+  let adOpened = false;
 
-  let hasScrolled = false;
+  function openAd() {
+    if (adOpened) return;
+
+    adOpened = true;
+    window.open('https://stories-1.netlify.app/', '_blank');
+    adLayer?.remove();
+
+    // إزالة المستمعات عشان ميتكررش
+    window.removeEventListener('scroll', handleScroll);
+    document.removeEventListener('click', handleClick);
+  }
 
   function handleScroll() {
-    if (!hasScrolled) {
-      hasScrolled = true;
+    openAd();
+  }
 
-      // فتح الإعلان في تبويب جديد
-      window.open('https://stories-1.netlify.app/', '_blank');
-
-      // إزالة الطبقة عشان ميتفتحش الإعلان تاني
-      adLayer?.remove();
-
-      // إلغاء الاستماع للسكرول بعد أول مرة
-      window.removeEventListener('scroll', handleScroll);
-    }
+  function handleClick() {
+    openAd();
   }
 
   window.addEventListener('scroll', handleScroll);
+  document.addEventListener('click', handleClick);
 </script>
+
 
 
 </body>
