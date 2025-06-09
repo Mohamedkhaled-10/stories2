@@ -1,15 +1,21 @@
-let visits = [];
+import fs from 'fs';
+import path from 'path';
 
 export default function handler(req, res) {
-  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || null;
-  const userAgent = req.headers['user-agent'] || 'غير معروف';
-  const now = new Date().toLocaleString('ar-EG', { timeZone: 'Africa/Cairo' });
+  const filePath = path.join(process.cwd(), 'ips.txt');
 
-  if (ip) {
-    // نتأكد إن الزيارة دي مش مكررة بنفس الـ IP والوقت بالثواني
-    // لكن ممكن نزود كل زيارة مع الوقت عشان نعرف كل دخول
-    visits.push({ ip, time: now, userAgent });
+  if (!fs.existsSync(filePath)) {
+    return res.status(200).json({ visits: [] });
   }
+
+  const data = fs.readFileSync(filePath, 'utf-8');
+  // كل سطر = "التاريخ - IP - UserAgent"
+  const visits = data.trim().split('\n').map(line => {
+    const [time, ip, ...uaParts] = line.split(' - ');
+    const userAgent = uaParts.join(' - '); // لو الـ user-agent فيه "-"
+
+    return { time, ip, userAgent };
+  });
 
   res.status(200).json({ visits });
 }
