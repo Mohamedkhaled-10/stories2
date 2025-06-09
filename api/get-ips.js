@@ -1,15 +1,11 @@
-// /api/get-ips.js
-import fs from 'fs';
-import path from 'path';
+let ips = [];  // هنا هنجمع IPs مؤقتًا في الذاكرة (دا مش مثالي للانتاج)
 
 export default function handler(req, res) {
-  const filePath = path.join(process.cwd(), 'ips.txt');
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || null;
 
-  try {
-    const data = fs.readFileSync(filePath, 'utf8');
-    const ips = data.split('\n').filter(ip => ip);
-    res.status(200).json({ ips });
-  } catch (err) {
-    res.status(500).json({ error: 'Cannot read IPs file' });
+  if (ip && !ips.includes(ip)) {
+    ips.push(ip);
   }
+
+  res.status(200).json({ ips });
 }
