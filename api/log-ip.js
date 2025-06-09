@@ -1,16 +1,15 @@
-// /api/log-ip.js
 import fs from 'fs';
 import path from 'path';
 
 export default function handler(req, res) {
-  // جلب الـ IP
-  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'غير معروف';
+  const userAgent = req.headers['user-agent'] || 'غير معروف';
+  const now = new Date().toLocaleString('ar-EG', { timeZone: 'Africa/Cairo' });
 
-  // مسار ملف ips.txt داخل مجلد root
   const filePath = path.join(process.cwd(), 'ips.txt');
+  const logLine = `${now} - ${ip} - ${userAgent}\n`;
 
-  // سجل الـ IP في الملف مع سطر جديد
-  fs.appendFileSync(filePath, ip + '\n');
+  fs.appendFileSync(filePath, logLine);
 
-  res.status(200).json({ message: 'IP recorded', ip });
+  res.status(200).json({ message: 'تم تسجيل الزيارة', ip, userAgent, time: now });
 }
