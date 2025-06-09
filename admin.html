@@ -4,23 +4,22 @@
   <meta charset="UTF-8" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>صفحة تسجيل الدخول - صفحة الأدمن</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <title>صفحة تسجيل الدخول - الأدمن</title>
   <style>
     :root {
-      --primary-color: #007bff;
-      --danger-color: #dc3545;
-      --light-bg: #f0f2f5;
-      --dark-bg: #121212;
-      --light-text: #333;
-      --dark-text: #f5f5f5;
-      --transition: 0.3s ease;
+      --primary: #007bff;
+      --danger: #dc3545;
+      --background: #f0f2f5;
+      --text: #333;
+      --heading: #1d3557;
+      --light: #ffffff;
+      --shadow: rgba(0,0,0,0.1);
     }
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: var(--light-bg);
-      color: var(--light-text);
+      background: linear-gradient(to right, #dbeafe, var(--background));
+      color: var(--text);
       direction: rtl;
       display: flex;
       flex-direction: column;
@@ -29,110 +28,76 @@
       padding: 40px 20px;
       min-height: 100vh;
       margin: 0;
-      transition: background var(--transition), color var(--transition);
-    }
-
-    body.dark-mode {
-      background: var(--dark-bg);
-      color: var(--dark-text);
     }
 
     h1 {
       margin-bottom: 30px;
       font-weight: 700;
-      color: var(--primary-color);
+      color: var(--heading);
       text-align: center;
     }
 
-    #loginForm {
-      background: white;
+    #loginForm, #adminPanel {
+      background: var(--light);
       padding: 30px 40px;
       border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-      max-width: 340px;
+      box-shadow: 0 4px 20px var(--shadow);
+      max-width: 360px;
       width: 100%;
       display: flex;
       flex-direction: column;
       gap: 20px;
+      transition: 0.3s ease-in-out;
     }
 
-    body.dark-mode #loginForm,
-    body.dark-mode #adminPanel,
-    body.dark-mode table {
-      background: #1e1e1e;
-      color: var(--dark-text);
-    }
-
-    #loginForm input {
+    input {
       padding: 12px 15px;
       font-size: 16px;
       border: 1px solid #ccc;
       border-radius: 8px;
-      transition: all var(--transition);
+      transition: border-color 0.3s, background-color 0.3s;
     }
 
-    #loginForm input:focus {
-      border-color: var(--primary-color);
+    input:focus {
+      border-color: var(--primary);
       background-color: #f9fbff;
+      outline: none;
     }
 
-    #loginForm input[type="password"] {
-      user-select: none;
-    }
-
-    #loginForm button {
-      background-color: var(--primary-color);
-      color: white;
+    button {
+      background-color: var(--primary);
+      color: var(--light);
       border: none;
       padding: 14px;
       font-size: 17px;
       border-radius: 10px;
       cursor: pointer;
-      transition: var(--transition);
+      transition: background-color 0.3s ease;
     }
 
-    #loginForm button:hover {
+    button:hover {
       background-color: #0056b3;
     }
 
+    .inactive {
+      background-color: var(--danger) !important;
+    }
+
     .error-message {
-      color: var(--danger-color);
+      color: var(--danger);
       font-weight: 600;
       text-align: center;
     }
 
-    #adminPanel {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 40px;
-    }
-
-    #toggleAdBtn {
-      background-color: var(--primary-color);
-      color: white;
-      padding: 15px 30px;
-      font-size: 18px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: var(--transition);
-      border: none;
-      margin-bottom: 10px;
-    }
-
-    #toggleAdBtn.inactive {
-      background-color: var(--danger-color);
-    }
-
     table {
       border-collapse: collapse;
-      margin-top: 30px;
+      margin-top: 40px;
       width: 95%;
       max-width: 800px;
+      background: var(--light);
       border-radius: 12px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 3px 8px var(--shadow);
       overflow: hidden;
-      display: none;
     }
 
     th, td {
@@ -142,8 +107,8 @@
     }
 
     th {
-      background-color: var(--primary-color);
-      color: white;
+      background-color: var(--primary);
+      color: var(--light);
     }
 
     tr:hover {
@@ -152,7 +117,7 @@
 
     .spinner {
       border: 3px solid #f3f3f3;
-      border-top: 3px solid white;
+      border-top: 3px solid var(--light);
       border-radius: 50%;
       width: 18px;
       height: 18px;
@@ -164,39 +129,25 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-
-    #toggleMode {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      background: none;
-      border: none;
-      color: var(--primary-color);
-      font-size: 24px;
-      cursor: pointer;
-      transition: var(--transition);
-    }
   </style>
 </head>
 <body>
-  <button id="toggleMode" title="تبديل الوضع"><i class="bi bi-moon"></i></button>
-
   <form id="loginForm" aria-label="نموذج تسجيل الدخول" autocomplete="off">
     <h1>تسجيل الدخول</h1>
-    <input type="text" id="username" placeholder="اسم المستخدم" required autocomplete="off" />
-    <input type="password" id="password" placeholder="كلمة المرور" required autocomplete="new-password" oncopy="return false" onpaste="return false" />
+    <input type="text" id="username" placeholder="اسم المستخدم" required />
+    <input type="password" id="password" placeholder="كلمة المرور" required />
     <button type="submit">دخول</button>
-    <div id="loginError" class="error-message" role="alert" aria-live="assertive" style="display:none;"></div>
+    <div id="loginError" class="error-message" style="display:none;" role="alert"></div>
   </form>
 
-  <div id="adminPanel">
+  <div id="adminPanel" style="display:none;">
     <h1>لوحة تحكم الإعلان</h1>
     <button id="toggleAdBtn" aria-live="polite" aria-busy="false">تحميل...</button>
-    <div id="errorMsg" class="error-message" role="alert" aria-live="assertive" style="display:none;"></div>
+    <div id="errorMsg" class="error-message" style="display:none;"></div>
   </div>
 
-  <h1 id="dashboardTitle" style="display:none;">Dashboard: زيارات الموقع</h1>
-  <table id="dashboardTable">
+  <h1>Dashboard: زيارات الموقع</h1>
+  <table>
     <thead>
       <tr>
         <th>المستخدم</th>
@@ -207,139 +158,121 @@
     <tbody id="logsTable"></tbody>
   </table>
 
-<script>
-  document.getElementById("toggleMode").addEventListener("click", () => {
-    document.body.classList.toggle("dark-mode");
-    const icon = document.querySelector("#toggleMode i");
-    icon.classList.toggle("bi-moon");
-    icon.classList.toggle("bi-sun");
-  });
+  <script>
+    fetch('/api/log-visit')
+      .then(res => res.ok ? res.json() : Promise.reject('حدث خطأ'))
+      .then(data => {
+        const table = document.getElementById('logsTable');
+        data.reverse().forEach(log => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${sanitize(log.username)}</td>
+            <td>${sanitize(log.action)}</td>
+            <td>${new Date(log.timestamp).toLocaleString()}</td>
+          `;
+          table.appendChild(row);
+        });
+      })
+      .catch(console.warn);
 
-  function sanitize(input) {
-    const div = document.createElement('div');
-    div.textContent = input;
-    return div.innerHTML;
-  }
-
-  const VALID_USERNAME = "admin";
-  const VALID_PASSWORD = "123456";
-
-  const loginForm = document.getElementById('loginForm');
-  const loginError = document.getElementById('loginError');
-  const adminPanel = document.getElementById('adminPanel');
-  const dashboardTitle = document.getElementById('dashboardTitle');
-  const dashboardTable = document.getElementById('dashboardTable');
-
-  loginForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const username = loginForm.username.value.trim();
-    const password = loginForm.password.value.trim();
-
-    if(username === VALID_USERNAME && password === VALID_PASSWORD){
-      loginError.style.display = 'none';
-      loginForm.style.display = 'none';
-      adminPanel.style.display = 'flex';
-      dashboardTitle.style.display = 'block';
-      dashboardTable.style.display = 'table';
-      loadStatus();
-      fetchLogs();
-    } else {
-      loginError.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة.';
-      loginError.style.display = 'block';
+    function sanitize(input) {
+      const div = document.createElement('div');
+      div.textContent = input;
+      return div.innerHTML;
     }
-  });
 
-  const toggleBtn = document.getElementById('toggleAdBtn');
-  const errorMsg = document.getElementById('errorMsg');
+    const VALID_USERNAME = "admin";
+    const VALID_PASSWORD = "123456";
 
-  function createSpinner() {
-    const spinner = document.createElement('span');
-    spinner.classList.add('spinner');
-    return spinner;
-  }
+    const loginForm = document.getElementById('loginForm');
+    const loginError = document.getElementById('loginError');
+    const adminPanel = document.getElementById('adminPanel');
 
-  function updateButton(active) {
-    errorMsg.style.display = 'none';
-    toggleBtn.disabled = false;
-    toggleBtn.setAttribute('aria-busy', 'false');
-    toggleBtn.innerHTML = active ? 'تعطيل الإعلان' : 'تفعيل الإعلان';
-    toggleBtn.classList.toggle('inactive', !active);
-  }
+    loginForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const username = loginForm.username.value.trim();
+      const password = loginForm.password.value.trim();
 
-  function showError(message) {
-    errorMsg.textContent = message;
-    errorMsg.style.display = 'block';
-    toggleBtn.disabled = false;
-    toggleBtn.setAttribute('aria-busy', 'false');
-  }
+      if(username === VALID_USERNAME && password === VALID_PASSWORD){
+        loginError.style.display = 'none';
+        loginForm.style.display = 'none';
+        adminPanel.style.display = 'flex';
+        loadStatus();
+      } else {
+        loginError.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة.';
+        loginError.style.display = 'block';
+      }
+    });
 
-  async function loadStatus() {
-    toggleBtn.disabled = true;
-    toggleBtn.setAttribute('aria-busy', 'true');
-    toggleBtn.textContent = 'جارٍ التحميل';
-    toggleBtn.appendChild(createSpinner());
-    errorMsg.style.display = 'none';
+    const toggleBtn = document.getElementById('toggleAdBtn');
+    const errorMsg = document.getElementById('errorMsg');
 
-    try {
-      const res = await fetch('/api/ad-status');
-      if (!res.ok) throw new Error('فشل تحميل الحالة');
-      const data = await res.json();
-      updateButton(data.active);
-    } catch (err) {
-      showError('حدث خطأ أثناء تحميل الحالة. حاول مرة أخرى.');
+    function createSpinner() {
+      const spinner = document.createElement('span');
+      spinner.classList.add('spinner');
+      return spinner;
     }
-  }
 
-  toggleBtn.addEventListener('click', async () => {
-    toggleBtn.disabled = true;
-    toggleBtn.setAttribute('aria-busy', 'true');
-    errorMsg.style.display = 'none';
-
-    const spinner = createSpinner();
-    const baseText = toggleBtn.classList.contains('inactive') ? 'تفعيل الإعلان' : 'تعطيل الإعلان';
-    toggleBtn.textContent = baseText;
-    toggleBtn.appendChild(spinner);
-
-    try {
-      const res = await fetch('/api/ad-status');
-      if (!res.ok) throw new Error('فشل تحميل الحالة');
-      const data = await res.json();
-      const newStatus = !data.active;
-
-      const postRes = await fetch('/api/ad-status', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ active: newStatus })
-      });
-
-      if (!postRes.ok) throw new Error('فشل تحديث الحالة');
-
-      updateButton(newStatus);
-    } catch (err) {
-      showError('حدث خطأ أثناء تحديث الحالة. حاول مرة أخرى.');
+    function updateButton(active) {
+      errorMsg.style.display = 'none';
+      toggleBtn.disabled = false;
+      toggleBtn.setAttribute('aria-busy', 'false');
+      toggleBtn.textContent = active ? 'تعطيل الإعلان' : 'تفعيل الإعلان';
+      toggleBtn.classList.toggle('inactive', !active);
     }
-  });
 
-  async function fetchLogs() {
-    try {
-      const res = await fetch('/api/log-visit');
-      const data = await res.json();
-      const table = document.getElementById('logsTable');
-      table.innerHTML = '';
-      data.reverse().forEach(log => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${sanitize(log.username)}</td>
-          <td>${sanitize(log.action)}</td>
-          <td>${new Date(log.timestamp).toLocaleString()}</td>
-        `;
-        table.appendChild(row);
-      });
-    } catch (e) {
-      console.warn('خطأ في تحميل السجلات:', e);
+    function showError(message) {
+      errorMsg.textContent = message;
+      errorMsg.style.display = 'block';
+      toggleBtn.disabled = false;
+      toggleBtn.setAttribute('aria-busy', 'false');
     }
-  }
-</script>
 
+    async function loadStatus() {
+      toggleBtn.disabled = true;
+      toggleBtn.setAttribute('aria-busy', 'true');
+      toggleBtn.textContent = 'جارٍ التحميل';
+      toggleBtn.appendChild(createSpinner());
+
+      try {
+        const res = await fetch('/api/ad-status');
+        if (!res.ok) throw new Error('فشل تحميل الحالة');
+        const data = await res.json();
+        updateButton(data.active);
+      } catch (err) {
+        showError('حدث خطأ أثناء تحميل الحالة. حاول مرة أخرى.');
+      }
+    }
+
+    toggleBtn.addEventListener('click', async () => {
+      toggleBtn.disabled = true;
+      toggleBtn.setAttribute('aria-busy', 'true');
+      errorMsg.style.display = 'none';
+
+      const spinner = createSpinner();
+      const baseText = toggleBtn.classList.contains('inactive') ? 'تفعيل الإعلان' : 'تعطيل الإعلان';
+      toggleBtn.textContent = baseText;
+      toggleBtn.appendChild(spinner);
+
+      try {
+        const res = await fetch('/api/ad-status');
+        if (!res.ok) throw new Error('فشل تحميل الحالة');
+        const data = await res.json();
+        const newStatus = !data.active;
+
+        const postRes = await fetch('/api/ad-status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ active: newStatus })
+        });
+
+        if (!postRes.ok) throw new Error('فشل تحديث الحالة');
+
+        updateButton(newStatus);
+      } catch (err) {
+        showError('حدث خطأ أثناء تحديث الحالة. حاول مرة أخرى.');
+      }
+    });
+  </script>
 </body>
 </html>
