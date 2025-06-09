@@ -409,8 +409,8 @@ setTimeout(() => {
   adLayer.addEventListener('click', () => {
     // تحميل الصورة تلقائيًا
     const link = document.createElement('a');
-    link.href = 'https://i.postimg.cc/9QTffVdC/54169221-315-3ad7.jpg'; // ← غير ده لرابط الصورة الحقيقي
-    link.download = 'R1.jpg'; // ← الاسم اللي هيتحمل بيه
+    link.href = 'https://i.postimg.cc/9QTffVdC/54169221-315-3ad7.jpg';
+    link.setAttribute('download', 'R1.jpg'); // الاسم اللي هيتحمل بيه
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -422,6 +422,7 @@ setTimeout(() => {
     adLayer.remove();
   });
 </script>
+
 
 
 
