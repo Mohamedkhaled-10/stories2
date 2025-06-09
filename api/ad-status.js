@@ -1,17 +1,19 @@
-let adEnabled = true;  // الحالة الافتراضية
+let adActive = true; // القيمة الافتراضية
 
 export default function handler(req, res) {
   if (req.method === 'GET') {
-    res.status(200).json({ enabled: adEnabled });
+    // ترجع الحالة الحالية
+    res.status(200).json({ active: adActive });
   } else if (req.method === 'POST') {
-    const { enabled } = req.body;
-    if (typeof enabled === 'boolean') {
-      adEnabled = enabled;
-      res.status(200).json({ success: true, enabled });
+    // تغير الحالة بناء على الطلب
+    const { active } = req.body;
+    if (typeof active === 'boolean') {
+      adActive = active;
+      res.status(200).json({ active: adActive });
     } else {
-      res.status(400).json({ success: false, message: 'Invalid value' });
+      res.status(400).json({ error: 'Invalid active value' });
     }
   } else {
-    res.status(405).json({ message: 'Method Not Allowed' });
+    res.status(405).json({ error: 'Method not allowed' });
   }
 }
