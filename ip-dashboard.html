@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>لوحة تحكم الـ IP</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9fafb;
+      color: #333;
+      margin: 20px;
+      padding: 0;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #2c3e50;
+    }
+
+    table {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      border-collapse: collapse;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px 20px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #4a90e2;
+      color: white;
+      font-size: 1.1rem;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f4f7fc;
+    }
+
+    tr:hover {
+      background-color: #dbe9fd;
+    }
+
+    caption {
+      caption-side: bottom;
+      padding: 10px;
+      font-style: italic;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>لوحة تحكم الـ IPs المسجلة</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>الرقم</th>
+        <th>عنوان الـ IP</th>
+      </tr>
+    </thead>
+    <tbody id="ip-list">
+      <!-- هنا هتظهر الـ IPs -->
+    </tbody>
+    <caption>عدد الـ IPs: <span id="count">0</span></caption>
+  </table>
+
+  <script>
+    fetch('/api/get-ips.js')
+      .then(response => response.json())
+      .then(data => {
+        const list = document.getElementById('ip-list');
+        const count = document.getElementById('count');
+        list.innerHTML = ''; // تأكد إن الجدول فاضي قبل الإضافة
+        data.ips.forEach((ip, index) => {
+          const tr = document.createElement('tr');
+
+          const tdIndex = document.createElement('td');
+          tdIndex.textContent = index + 1;
+
+          const tdIP = document.createElement('td');
+          tdIP.textContent = ip;
+
+          tr.appendChild(tdIndex);
+          tr.appendChild(tdIP);
+          list.appendChild(tr);
+        });
+        count.textContent = data.ips.length;
+      })
+      .catch(err => {
+        const list = document.getElementById('ip-list');
+        list.innerHTML = '<tr><td colspan="2" style="color:red;">حدث خطأ في تحميل البيانات</td></tr>';
+        console.error(err);
+      });
+  </script>
+
+</body>
+</html>
