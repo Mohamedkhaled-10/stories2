@@ -2,7 +2,7 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8" />
-  <title>صفحة الأدمن - تحكم وإرسال إشعارات</title>
+  <title>صفحة تسجيل الدخول - صفحة الأدمن</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -22,37 +22,34 @@
       font-weight: 700;
       color: #222;
     }
-    /* باقي التنسيقات حسب كودك السابق */
-    /* ... */
-    /* التنسيقات الخاصة بإرسال الإشعار */
-    #notificationForm {
+    /* صفحة تسجيل الدخول */
+    #loginForm {
       background: white;
-      padding: 25px 35px;
+      padding: 30px 40px;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      max-width: 400px;
+      max-width: 320px;
       width: 100%;
-      margin-top: 30px;
       display: flex;
       flex-direction: column;
-      gap: 15px;
+      gap: 20px;
     }
-    #notificationForm input {
-      padding: 10px 14px;
+    #loginForm input {
+      padding: 12px 15px;
       font-size: 16px;
       border: 1px solid #ccc;
       border-radius: 8px;
       outline-offset: 2px;
       transition: border-color 0.3s ease;
     }
-    #notificationForm input:focus {
+    #loginForm input:focus {
       border-color: #007bff;
     }
-    #notificationForm button {
+    #loginForm button {
       background-color: #007bff;
       color: white;
       border: none;
-      padding: 12px;
+      padding: 15px;
       font-size: 18px;
       border-radius: 8px;
       cursor: pointer;
@@ -60,18 +57,78 @@
       transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
       user-select: none;
     }
-    #notificationForm button:hover {
+    #loginForm button:hover {
       background-color: #0056b3;
       box-shadow: 0 8px 16px rgba(0, 86, 179, 0.4);
       transform: translateY(-2px);
     }
-    #notificationForm button:active {
+    #loginForm button:active {
       transform: translateY(1px);
       box-shadow: 0 4px 8px rgba(0, 86, 179, 0.2);
+    }
+    .error-message {
+      color: #dc3545;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    /* صفحة التحكم - مخفية في البداية */
+    #adminPanel {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+    }
+    button#toggleAdBtn {
+      position: relative;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 15px 40px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    button#toggleAdBtn:hover:not(:disabled) {
+      background-color: #0056b3;
+      box-shadow: 0 8px 16px rgba(0, 86, 179, 0.4);
+      transform: translateY(-2px);
+    }
+    button#toggleAdBtn:active:not(:disabled) {
+      transform: translateY(1px);
+      box-shadow: 0 4px 8px rgba(0, 86, 179, 0.2);
+    }
+    button#toggleAdBtn.inactive {
+      background-color: #dc3545;
+      box-shadow: 0 6px 12px rgba(220, 53, 69, 0.3);
+    }
+    button#toggleAdBtn.inactive:hover:not(:disabled) {
+      background-color: #a71d2a;
+      box-shadow: 0 8px 16px rgba(167, 29, 42, 0.4);
+    }
+    /* سبينر تحميل صغير */
+    .spinner {
+      border: 3px solid #f3f3f3; /* لون الخلفية */
+      border-top: 3px solid white; /* لون القطعة الدوارة */
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      animation: spin 1s linear infinite;
+      margin-left: 10px; /* عشان يبقى جنب النص */
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
+  
   <!-- نموذج تسجيل الدخول -->
   <form id="loginForm" aria-label="نموذج تسجيل الدخول">
     <h1>تسجيل الدخول</h1>
@@ -82,90 +139,47 @@
   </form>
 
   <!-- لوحة التحكم مخفية -->
-  <div id="adminPanel" style="display:none; flex-direction: column; align-items: center;">
+  <div id="adminPanel">
     <h1>تحكم في حالة الإعلان</h1>
-    <button id="toggleAdBtn" aria-live="polite" aria-busy="false">تحميل...</button>
+    <button id="toggleAdBtn" aria-live="polite" aria-busy="false">
+      تحميل...
+    </button>
     <div id="errorMsg" class="error-message" role="alert" aria-live="assertive" style="display:none;"></div>
-
-    <!-- نموذج إرسال الإشعار -->
-    <h1 style="margin-top: 40px;">إرسال إشعار</h1>
-    <form id="notificationForm" onsubmit="sendNotification(event)" aria-label="نموذج إرسال إشعار">
-      <input type="text" id="text" placeholder="نص الإشعار" required class="block border p-2 mb-2" />
-      <input type="text" id="image" placeholder="رابط الصورة" class="block border p-2 mb-2" />
-      <input type="text" id="link" placeholder="رابط عند الضغط" class="block border p-2 mb-2" />
-      <button type="submit">إرسال</button>
-    </form>
   </div>
 
   <h1>Dashboard: زيارات الموقع</h1>
-  <table border="1" style="width: 90%; max-width: 700px; text-align: center;">
-    <thead>
-      <tr>
-        <th>المستخدم</th>
-        <th>العملية</th>
-        <th>الوقت</th>
-      </tr>
-    </thead>
-    <tbody id="logsTable"></tbody>
-  </table>
+<table border="1">
+  <thead>
+    <tr>
+      <th>المستخدم</th>
+      <th>العملية</th>
+      <th>الوقت</th>
+    </tr>
+  </thead>
+  <tbody id="logsTable">
+    <!-- البيانات هتتحط هنا -->
+  </tbody>
+</table>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script>
+  fetch('/api/log-visit')
+    .then(res => res.json())
+    .then(data => {
+      const table = document.getElementById('logsTable');
+      data.reverse().forEach(log => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${log.username}</td>
+          <td>${log.action}</td>
+          <td>${new Date(log.timestamp).toLocaleString()}</td>
+        `;
+        table.appendChild(row);
+      });
+    });
+</script>
 
   <script>
-    // تهيئة Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyA2VbkCXuy2cju8ZW06epspkdI_hG6eAI",
-      authDomain: "stor-67a81.firebaseapp.com",
-      databaseURL: "https://stor-67a81-default-rtdb.europe-west1.firebasedatabase.app",
-      projectId: "stor-67a81",
-      storageBucket: "stor-67a81.appspot.com",
-      messagingSenderId: "1001498159083",
-      appId: "1:1001498159083:web:31021c6a97c13c8dad679e",
-      measurementId: "G-15HPJ9RSS7"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
-
-    // إرسال الإشعار
-    function sendNotification(e) {
-      e.preventDefault();
-      const data = {
-        text: document.getElementById("text").value.trim(),
-        image: document.getElementById("image").value.trim(),
-        link: document.getElementById("link").value.trim(),
-        active: true
-      };
-      database.ref("notifications/current").set(data)
-      .then(() => {
-        alert("تم إرسال الإشعار!");
-        // تفريغ الحقول بعد الإرسال
-        document.getElementById("notificationForm").reset();
-      })
-      .catch(err => {
-        alert("حدث خطأ أثناء إرسال الإشعار. حاول مرة أخرى.");
-        console.error(err);
-      });
-    }
-
-    // تحميل سجل الزيارات
-    fetch('/api/log-visit')
-      .then(res => res.json())
-      .then(data => {
-        const table = document.getElementById('logsTable');
-        data.reverse().forEach(log => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${log.username}</td>
-            <td>${log.action}</td>
-            <td>${new Date(log.timestamp).toLocaleString()}</td>
-          `;
-          table.appendChild(row);
-        });
-      });
-
-    // بيانات دخول ثابتة (تجربة فقط)
+    // بيانات دخول ثابتة (للتجربة فقط)
     const VALID_USERNAME = "admin";
     const VALID_PASSWORD = "123456";
 
@@ -189,7 +203,8 @@
       }
     });
 
-    // تحكم في حالة الإعلان
+
+    // كود صفحة الأدمن (نفس الموجود عندك بالضبط)
     const toggleBtn = document.getElementById('toggleAdBtn');
     const errorMsg = document.getElementById('errorMsg');
 
@@ -249,22 +264,22 @@
       toggleBtn.appendChild(spinner);
 
       try {
-        const currentStatusRes = await fetch('/api/ad-status');
-        if (!currentStatusRes.ok) throw new Error('فشل تحميل الحالة الحالية');
-        const currentStatus = await currentStatusRes.json();
+        const res = await fetch('/api/ad-status');
+        if (!res.ok) throw new Error('فشل تحميل الحالة');
+        const data = await res.json();
+        const newStatus = !data.active;
 
-        const newStatus = !currentStatus.active;
-
-        const toggleRes = await fetch('/api/ad-toggle', {
+        const postRes = await fetch('/api/ad-status', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ active: newStatus }),
+          body: JSON.stringify({ active: newStatus })
         });
 
-        if (!toggleRes.ok) throw new Error('فشل تغيير الحالة');
+        if (!postRes.ok) throw new Error('فشل تحديث الحالة');
+
         updateButton(newStatus);
       } catch (err) {
-        showError('حدث خطأ أثناء تغيير الحالة. حاول مرة أخرى.');
+        showError('حدث خطأ أثناء تحديث الحالة. حاول مرة أخرى.');
         console.error(err);
       }
     });
