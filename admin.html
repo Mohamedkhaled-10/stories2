@@ -2,27 +2,34 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8" />
-  <title>صفحة تسجيل الدخول - صفحة الأدمن</title>
+  <title>لوحة تحكم الأدمن</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f0f2f5;
+      background: linear-gradient(to right, #f0f2f5, #e0e7ef);
       color: #333;
       direction: rtl;
+      padding: 0;
+      margin: 0;
+    }
+
+    h1 {
+      color: #222;
+      margin: 0;
+    }
+
+    /* مركز الصفحة */
+    .centered {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 40px 20px;
       min-height: 100vh;
-      margin: 0;
+      padding: 20px;
     }
-    h1 {
-      margin-bottom: 30px;
-      font-weight: 700;
-      color: #222;
-    }
-    /* صفحة تسجيل الدخول */
+
+    /* نموذج تسجيل الدخول */
     #loginForm {
       background: white;
       padding: 30px 40px;
@@ -34,17 +41,14 @@
       flex-direction: column;
       gap: 20px;
     }
+
     #loginForm input {
       padding: 12px 15px;
       font-size: 16px;
       border: 1px solid #ccc;
       border-radius: 8px;
-      outline-offset: 2px;
-      transition: border-color 0.3s ease;
     }
-    #loginForm input:focus {
-      border-color: #007bff;
-    }
+
     #loginForm button {
       background-color: #007bff;
       color: white;
@@ -53,74 +57,112 @@
       font-size: 18px;
       border-radius: 8px;
       cursor: pointer;
-      box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
-      transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
-      user-select: none;
+      transition: 0.3s ease;
     }
+
     #loginForm button:hover {
       background-color: #0056b3;
-      box-shadow: 0 8px 16px rgba(0, 86, 179, 0.4);
-      transform: translateY(-2px);
     }
-    #loginForm button:active {
-      transform: translateY(1px);
-      box-shadow: 0 4px 8px rgba(0, 86, 179, 0.2);
-    }
+
     .error-message {
       color: #dc3545;
       font-weight: 600;
       text-align: center;
     }
 
-    /* صفحة التحكم - مخفية في البداية */
+    /* لوحة التحكم */
     #adminPanel {
       display: none;
-      flex-direction: column;
-      align-items: center;
+      padding: 20px;
     }
-    button#toggleAdBtn {
-      position: relative;
+
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      background-color: #fff;
+      padding: 20px;
+      border-bottom: 2px solid #ddd;
+    }
+
+    .dashboard-header h1 {
+      font-size: 24px;
+    }
+
+    .logout-btn {
+      background: #dc3545;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .card i {
+      font-size: 30px;
+      color: #007bff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+    }
+
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: center;
+    }
+
+    table th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    #toggleAdBtn {
       background-color: #007bff;
       color: white;
       border: none;
-      padding: 15px 40px;
+      padding: 15px 30px;
       font-size: 18px;
       border-radius: 8px;
       cursor: pointer;
-      box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
-      transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
-      user-select: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      margin-bottom: 20px;
     }
-    button#toggleAdBtn:hover:not(:disabled) {
-      background-color: #0056b3;
-      box-shadow: 0 8px 16px rgba(0, 86, 179, 0.4);
-      transform: translateY(-2px);
-    }
-    button#toggleAdBtn:active:not(:disabled) {
-      transform: translateY(1px);
-      box-shadow: 0 4px 8px rgba(0, 86, 179, 0.2);
-    }
-    button#toggleAdBtn.inactive {
+
+    #toggleAdBtn.inactive {
       background-color: #dc3545;
-      box-shadow: 0 6px 12px rgba(220, 53, 69, 0.3);
     }
-    button#toggleAdBtn.inactive:hover:not(:disabled) {
-      background-color: #a71d2a;
-      box-shadow: 0 8px 16px rgba(167, 29, 42, 0.4);
-    }
-    /* سبينر تحميل صغير */
+
     .spinner {
-      border: 3px solid #f3f3f3; /* لون الخلفية */
-      border-top: 3px solid white; /* لون القطعة الدوارة */
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid white;
       border-radius: 50%;
       width: 18px;
       height: 18px;
       animation: spin 1s linear infinite;
-      margin-left: 10px; /* عشان يبقى جنب النص */
+      margin-right: 10px;
     }
+
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
@@ -128,161 +170,160 @@
   </style>
 </head>
 <body>
-  
-  <!-- نموذج تسجيل الدخول -->
-  <form id="loginForm" aria-label="نموذج تسجيل الدخول">
-    <h1>تسجيل الدخول</h1>
-    <input type="text" id="username" placeholder="اسم المستخدم" required autocomplete="username" />
-    <input type="password" id="password" placeholder="كلمة المرور" required autocomplete="current-password" />
-    <button type="submit">دخول</button>
-    <div id="loginError" class="error-message" role="alert" aria-live="assertive" style="display:none;"></div>
-  </form>
 
-  <!-- لوحة التحكم مخفية -->
-  <div id="adminPanel">
-    <h1>تحكم في حالة الإعلان</h1>
-    <button id="toggleAdBtn" aria-live="polite" aria-busy="false">
-      تحميل...
-    </button>
-    <div id="errorMsg" class="error-message" role="alert" aria-live="assertive" style="display:none;"></div>
+<div class="centered" id="loginSection">
+  <form id="loginForm">
+    <h1>تسجيل الدخول</h1>
+    <input type="text" id="username" placeholder="اسم المستخدم" required />
+    <input type="password" id="password" placeholder="كلمة المرور" required />
+    <button type="submit">دخول</button>
+    <div id="loginError" class="error-message" style="display:none;"></div>
+  </form>
+</div>
+
+<div id="adminPanel">
+  <div class="dashboard-header">
+    <h1><i class="fas fa-tools"></i> لوحة تحكم الأدمن</h1>
+    <button class="logout-btn" onclick="location.reload()">تسجيل الخروج</button>
   </div>
 
-  <h1>Dashboard: زيارات الموقع</h1>
-<table border="1">
-  <thead>
-    <tr>
-      <th>المستخدم</th>
-      <th>العملية</th>
-      <th>الوقت</th>
-    </tr>
-  </thead>
-  <tbody id="logsTable">
-    <!-- البيانات هتتحط هنا -->
-  </tbody>
-</table>
+  <div class="cards">
+    <div class="card"><i class="fas fa-bullhorn"></i> <span id="adStatus">جارٍ التحميل...</span></div>
+    <div class="card"><i class="fas fa-clock"></i> <span id="currentTime">--:--:--</span></div>
+    <div class="card"><i class="fas fa-users"></i> <span>عدد الزوار: <span id="visitorCount">--</span></span></div>
+  </div>
+
+  <button id="toggleAdBtn">تحميل...</button>
+  <div id="errorMsg" class="error-message" style="display:none;"></div>
+
+  <h2>زيارات الموقع</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>المستخدم</th>
+        <th>العملية</th>
+        <th>الوقت</th>
+      </tr>
+    </thead>
+    <tbody id="logsTable"></tbody>
+  </table>
+</div>
 
 <script>
-  fetch('/api/log-visit')
-    .then(res => res.json())
-    .then(data => {
+  const VALID_USERNAME = "admin";
+  const VALID_PASSWORD = "123456";
+
+  const loginForm = document.getElementById('loginForm');
+  const loginError = document.getElementById('loginError');
+  const adminPanel = document.getElementById('adminPanel');
+  const loginSection = document.getElementById('loginSection');
+
+  loginForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const username = loginForm.username.value.trim();
+    const password = loginForm.password.value.trim();
+
+    if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+      loginSection.style.display = 'none';
+      adminPanel.style.display = 'block';
+      loadStatus();
+      loadLogs();
+      startClock();
+    } else {
+      loginError.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة.';
+      loginError.style.display = 'block';
+    }
+  });
+
+  const toggleBtn = document.getElementById('toggleAdBtn');
+  const errorMsg = document.getElementById('errorMsg');
+  const adStatus = document.getElementById('adStatus');
+  const visitorCount = document.getElementById('visitorCount');
+
+  function createSpinner() {
+    const spinner = document.createElement('span');
+    spinner.classList.add('spinner');
+    return spinner;
+  }
+
+  function updateButton(active) {
+    errorMsg.style.display = 'none';
+    toggleBtn.disabled = false;
+    toggleBtn.innerHTML = active ? 'تعطيل الإعلان' : 'تفعيل الإعلان';
+    adStatus.textContent = active ? 'الإعلان مفعل' : 'الإعلان معطل';
+    toggleBtn.classList.toggle('inactive', !active);
+  }
+
+  function showError(message) {
+    errorMsg.textContent = message;
+    errorMsg.style.display = 'block';
+  }
+
+  async function loadStatus() {
+    toggleBtn.disabled = true;
+    toggleBtn.textContent = 'جارٍ التحميل';
+    toggleBtn.appendChild(createSpinner());
+
+    try {
+      const res = await fetch('/api/ad-status');
+      const data = await res.json();
+      updateButton(data.active);
+    } catch {
+      showError('حدث خطأ أثناء تحميل الحالة.');
+      toggleBtn.textContent = 'فشل التحميل';
+    }
+  }
+
+  toggleBtn.addEventListener('click', async () => {
+    toggleBtn.disabled = true;
+    toggleBtn.innerHTML = 'جارٍ التبديل';
+    toggleBtn.appendChild(createSpinner());
+
+    try {
+      const res = await fetch('/api/ad-status');
+      const data = await res.json();
+      const newStatus = !data.active;
+
+      await fetch('/api/ad-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ active: newStatus })
+      });
+
+      updateButton(newStatus);
+    } catch {
+      showError('حدث خطأ أثناء تحديث الحالة.');
+    }
+  });
+
+  async function loadLogs() {
+    try {
+      const res = await fetch('/api/log-visit');
+      const data = await res.json();
       const table = document.getElementById('logsTable');
+      visitorCount.textContent = data.length;
+
       data.reverse().forEach(log => {
         const row = document.createElement('tr');
-        row.innerHTML = 
+        row.innerHTML = `
           <td>${log.username}</td>
           <td>${log.action}</td>
           <td>${new Date(log.timestamp).toLocaleString()}</td>
-        ;
+        `;
         table.appendChild(row);
       });
-    });
+    } catch {
+      showError('فشل تحميل سجل الزوار');
+    }
+  }
+
+  function startClock() {
+    const clock = document.getElementById('currentTime');
+    setInterval(() => {
+      const now = new Date();
+      clock.textContent = now.toLocaleTimeString();
+    }, 1000);
+  }
 </script>
-
-  <script>
-    // بيانات دخول ثابتة (للتجربة فقط)
-    const VALID_USERNAME = "admin";
-    const VALID_PASSWORD = "123456";
-
-    const loginForm = document.getElementById('loginForm');
-    const loginError = document.getElementById('loginError');
-    const adminPanel = document.getElementById('adminPanel');
-
-    loginForm.addEventListener('submit', e => {
-      e.preventDefault();
-      const username = loginForm.username.value.trim();
-      const password = loginForm.password.value.trim();
-
-      if(username === VALID_USERNAME && password === VALID_PASSWORD){
-        loginError.style.display = 'none';
-        loginForm.style.display = 'none';
-        adminPanel.style.display = 'flex';
-        loadStatus();
-      } else {
-        loginError.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة.';
-        loginError.style.display = 'block';
-      }
-    });
-
-
-    // كود صفحة الأدمن (نفس الموجود عندك بالضبط)
-    const toggleBtn = document.getElementById('toggleAdBtn');
-    const errorMsg = document.getElementById('errorMsg');
-
-    function createSpinner() {
-      const spinner = document.createElement('span');
-      spinner.classList.add('spinner');
-      return spinner;
-    }
-
-    function updateButton(active) {
-      errorMsg.style.display = 'none';
-      toggleBtn.disabled = false;
-      toggleBtn.setAttribute('aria-busy', 'false');
-      toggleBtn.innerHTML = active ? 'تعطيل الإعلان' : 'تفعيل الإعلان';
-
-      if (active) {
-        toggleBtn.classList.remove('inactive');
-      } else {
-        toggleBtn.classList.add('inactive');
-      }
-    }
-
-    function showError(message) {
-      errorMsg.textContent = message;
-      errorMsg.style.display = 'block';
-      toggleBtn.disabled = false;
-      toggleBtn.setAttribute('aria-busy', 'false');
-    }
-
-    async function loadStatus() {
-      toggleBtn.disabled = true;
-      toggleBtn.setAttribute('aria-busy', 'true');
-      toggleBtn.textContent = 'جارٍ التحميل';
-      toggleBtn.appendChild(createSpinner());
-      errorMsg.style.display = 'none';
-
-      try {
-        const res = await fetch('/api/ad-status');
-        if (!res.ok) throw new Error('فشل تحميل الحالة');
-        const data = await res.json();
-        updateButton(data.active);
-      } catch (err) {
-        showError('حدث خطأ أثناء تحميل الحالة. حاول مرة أخرى.');
-        console.error(err);
-        toggleBtn.textContent = 'إعادة تحميل الحالة';
-      }
-    }
-
-    toggleBtn.addEventListener('click', async () => {
-      toggleBtn.disabled = true;
-      toggleBtn.setAttribute('aria-busy', 'true');
-      errorMsg.style.display = 'none';
-
-      const spinner = createSpinner();
-      const baseText = toggleBtn.classList.contains('inactive') ? 'تفعيل الإعلان' : 'تعطيل الإعلان';
-      toggleBtn.textContent = baseText;
-      toggleBtn.appendChild(spinner);
-
-      try {
-        const res = await fetch('/api/ad-status');
-        if (!res.ok) throw new Error('فشل تحميل الحالة');
-        const data = await res.json();
-        const newStatus = !data.active;
-
-        const postRes = await fetch('/api/ad-status', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ active: newStatus })
-        });
-
-        if (!postRes.ok) throw new Error('فشل تحديث الحالة');
-
-        updateButton(newStatus);
-      } catch (err) {
-        showError('حدث خطأ أثناء تحديث الحالة. حاول مرة أخرى.');
-        console.error(err);
-      }
-    });
-  </script>
 </body>
 </html>
