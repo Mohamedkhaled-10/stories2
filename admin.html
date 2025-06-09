@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>صفحة الأدمن</title>
   <style>
-    /* استايل عام للجسم */
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #f0f2f5;
@@ -17,14 +16,13 @@
       min-height: 100vh;
       margin: 0;
     }
-
     h1 {
       margin-bottom: 30px;
       font-weight: 700;
       color: #222;
     }
-
     button#toggleAdBtn {
+      position: relative;
       background-color: #007bff;
       color: white;
       border: none;
@@ -35,66 +33,122 @@
       box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
       transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
       user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-
-    button#toggleAdBtn:hover {
+    button#toggleAdBtn:hover:not(:disabled) {
       background-color: #0056b3;
       box-shadow: 0 8px 16px rgba(0, 86, 179, 0.4);
       transform: translateY(-2px);
     }
-
-    button#toggleAdBtn:active {
+    button#toggleAdBtn:active:not(:disabled) {
       transform: translateY(1px);
       box-shadow: 0 4px 8px rgba(0, 86, 179, 0.2);
     }
-
-    /* لون الزر عند تعطيل الإعلان */
     button#toggleAdBtn.inactive {
-      background-color: #dc3545; /* أحمر */
+      background-color: #dc3545;
       box-shadow: 0 6px 12px rgba(220, 53, 69, 0.3);
     }
-
-    button#toggleAdBtn.inactive:hover {
+    button#toggleAdBtn.inactive:hover:not(:disabled) {
       background-color: #a71d2a;
       box-shadow: 0 8px 16px rgba(167, 29, 42, 0.4);
+    }
+
+    /* سبينر تحميل صغير */
+    .spinner {
+      border: 3px solid #f3f3f3; /* لون الخلفية */
+      border-top: 3px solid white; /* لون القطعة الدوارة */
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      animation: spin 1s linear infinite;
+      margin-left: 10px; /* عشان يبقى جنب النص */
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* حالة الخطأ */
+    .error-message {
+      margin-top: 15px;
+      color: #dc3545;
+      font-weight: 600;
     }
   </style>
 </head>
 <body>
   <h1>تحكم في حالة الإعلان</h1>
-  <button id="toggleAdBtn">تحميل...</button>
+  <button id="toggleAdBtn" aria-live="polite" aria-busy="false">
+    تحميل...
+  </button>
+  <div id="errorMsg" class="error-message" role="alert" aria-live="assertive" style="display:none;"></div>
 
   <script>
     const toggleBtn = document.getElementById('toggleAdBtn');
+    const errorMsg = document.getElementById('errorMsg');
+
+    function createSpinner() {
+      const spinner = document.createElement('span');
+      spinner.classList.add('spinner');
+      return spinner;
+    }
 
     // تحديث الزر بناءً على الحالة
     function updateButton(active) {
+      errorMsg.style.display = 'none';
+      toggleBtn.disabled = false;
+      toggleBtn.setAttribute('aria-busy', 'false');
+      toggleBtn.innerHTML = active ? 'تعطيل الإعلان' : 'تفعيل الإعلان';
+
       if (active) {
-        toggleBtn.textContent = 'تعطيل الإعلان';
         toggleBtn.classList.remove('inactive');
       } else {
-        toggleBtn.textContent = 'تفعيل الإعلان';
         toggleBtn.classList.add('inactive');
       }
     }
 
-    // تجيب الحالة من السيرفر وتعرضها في الزر
+    // عرض رسالة الخطأ بدون تعطيل الزر
+    function showError(message) {
+      errorMsg.textContent = message;
+      errorMsg.style.display = 'block';
+      toggleBtn.disabled = false;
+      toggleBtn.setAttribute('aria-busy', 'false');
+    }
+
     async function loadStatus() {
+      toggleBtn.disabled = true;
+      toggleBtn.setAttribute('aria-busy', 'true');
+      toggleBtn.textContent = 'جارٍ التحميل';
+      toggleBtn.appendChild(createSpinner());
+      errorMsg.style.display = 'none';
+
       try {
         const res = await fetch('/api/ad-status');
         if (!res.ok) throw new Error('فشل تحميل الحالة');
         const data = await res.json();
         updateButton(data.active);
       } catch (err) {
-        toggleBtn.textContent = 'حدث خطأ، أعد المحاولة';
-        toggleBtn.disabled = true;
+        showError('حدث خطأ أثناء تحميل الحالة. حاول مرة أخرى.');
         console.error(err);
+        toggleBtn.textContent = 'إعادة تحميل الحالة';
       }
     }
 
     toggleBtn.addEventListener('click', async () => {
       toggleBtn.disabled = true;
-      toggleBtn.textContent = '...جاري التحديث';
+      toggleBtn.setAttribute('aria-busy', 'true');
+
+      // إزالة أي رسالة خطأ
+      errorMsg.style.display = 'none';
+
+      // عرض سبينر جنب النص
+      const spinner = createSpinner();
+      const baseText = toggleBtn.classList.contains('inactive') ? 'تفعيل الإعلان' : 'تعطيل الإعلان';
+      toggleBtn.textContent = baseText;
+      toggleBtn.appendChild(spinner);
 
       try {
         const res = await fetch('/api/ad-status');
@@ -112,10 +166,8 @@
 
         updateButton(newStatus);
       } catch (err) {
-        toggleBtn.textContent = 'حدث خطأ، أعد المحاولة';
+        showError('حدث خطأ أثناء تحديث الحالة. حاول مرة أخرى.');
         console.error(err);
-      } finally {
-        toggleBtn.disabled = false;
       }
     });
 
