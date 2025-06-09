@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <title>صفحة الأدمن</title>
+</head>
+<body>
+  <h1>تحكم في حالة الإعلان</h1>
+  <button id="toggle-btn">جاري التحميل...</button>
+
+  <script>
+    const btn = document.getElementById('toggle-btn');
+
+    // جلب الحالة الحالية
+    fetch('/api/ad-status')
+      .then(res => res.json())
+      .then(data => {
+        updateButton(data.enabled);
+      });
+
+    function updateButton(enabled) {
+      btn.textContent = enabled ? 'تعطيل الإعلان' : 'تفعيل الإعلان';
+      btn.onclick = () => {
+        fetch('/api/ad-status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ enabled: !enabled }),
+        })
+        .then(res => res.json())
+        .then(data => {
+          enabled = data.enabled;
+          updateButton(enabled);
+        });
+      };
+    }
+  </script>
+</body>
+</html>
