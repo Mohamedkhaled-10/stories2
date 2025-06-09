@@ -317,6 +317,37 @@ class="absolute right-0 top-0 h-full w-1/3 sm:w-1/4 xs:w-1/5 object-cover opacit
   <div id="ad-layer"></div>
 
 
+  <!-- صورة الإعلان -->
+  <img src="https://i.postimg.cc/9QTffVdC/54169221-315-3ad7.jpg" 
+       alt="إعلان" 
+       class="w-full h-auto rounded-lg">
+
+  <!-- نص الإعلان والرابط -->
+  <div class="text-center">
+    <p class="text-base font-semibold text-gray-800 mb-1">شاهد أقوى قصة رعب الآن!</p>
+    <a href="https://youtube.com" target="_blank" class="text-blue-600 text-sm hover:underline">
+      اضغط هنا للمشاهدة
+    </a>
+  </div>
+</div>
+
+<!-- أنميشن -->
+<style>
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out;
+  }
+</style>
+
   <!-- تذييل الصفحة مع روابط مواقع التواصل الاجتماعي -->
   <footer id="footer">
     <div class="footer-content">
@@ -463,5 +494,51 @@ fetch('/api/log-ip.js')
   })
   .catch(err => console.error('Error recording IP:', err));
   </script>
+
+  <!-- Firebase CDN -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+<script>
+  // إعداد Firebase
+  const firebaseConfig = {
+    apiKey: "انسخ من إعدادات مشروعك",
+    authDomain: "انسخ من إعدادات مشروعك",
+    databaseURL: "انسخ من إعدادات مشروعك",
+    projectId: "انسخ من إعدادات مشروعك",
+    storageBucket: "انسخ من إعدادات مشروعك",
+    messagingSenderId: "انسخ من إعدادات مشروعك",
+    appId: "انسخ من إعدادات مشروعك"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  // المراقبة اللحظية للإشعارات
+  db.ref("notifications/current").on("value", (snapshot) => {
+    const data = snapshot.val();
+    if (data && data.active) {
+      showAd(data);
+    }
+  });
+
+  // دالة عرض الإعلان
+  function showAd(data) {
+    const existing = document.getElementById("ad-popup");
+    if (existing) existing.remove();
+
+    const adBox = document.createElement("div");
+    adBox.innerHTML = `
+      <div id="ad-popup" class="fixed bottom-6 right-6 w-[400px] bg-white border rounded-xl shadow-xl p-4 z-50">
+        <button onclick="this.parentElement.remove()" class="absolute top-1 right-2 text-xl text-red-600">&times;</button>
+        <img src="${data.image}" class="w-full rounded mb-2 max-h-[300px] object-cover">
+        <p class="font-bold text-lg mb-1">${data.text}</p>
+        <a href="${data.link}" target="_blank" class="text-blue-600 underline text-sm">شاهد الإعلان</a>
+      </div>
+    `;
+    document.body.appendChild(adBox);
+  }
+</script>
+
 </body>
 </html>
