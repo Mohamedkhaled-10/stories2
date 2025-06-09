@@ -432,5 +432,28 @@ setTimeout(() => {
 
   initAd();
 </script>
+  <script>
+  const username = "زائر";
+
+  // تسجيل الدخول
+  fetch('/api/log-visit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      username,
+      action: 'login',
+      timestamp: new Date().toISOString()
+    })
+  });
+
+  // تسجيل الخروج عند إغلاق الصفحة
+  window.addEventListener('beforeunload', () => {
+    navigator.sendBeacon('/api/log-visit', JSON.stringify({
+      username,
+      action: 'logout',
+      timestamp: new Date().toISOString()
+    }));
+  });
+</script>
 </body>
 </html>
